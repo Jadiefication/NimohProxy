@@ -37,18 +37,22 @@ public class NimohProxy {
         event.setResult(PluginMessageEvent.ForwardResult.handled());
         ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
         String subchannel = in.readUTF();
+        Player player = (Player) event.getSource();
 
+        String serverName = null;
         if (subchannel.equals("Connect")) {
-            String serverName = in.readUTF();
-            if (event.getSource() instanceof Player player) {
+            serverName = in.readUTF();
+            if (event.getSource() instanceof Player) {
                 server.getServer(serverName).ifPresent(targetServer ->
                         player.createConnectionRequest(targetServer).fireAndForget());
             }
         }
+        logger.info("Send " + player.getUsername() + " to " + serverName);
     }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        logger.info("NimohProxy is enabled!");
         server.getChannelRegistrar().register(IDENTIFIER);
     }
 }
