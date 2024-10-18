@@ -9,6 +9,8 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.ServerConnection;
+import com.velocitypowered.api.proxy.messages.ChannelMessageSource;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import org.slf4j.Logger;
 
@@ -37,17 +39,15 @@ public class NimohProxy {
         event.setResult(PluginMessageEvent.ForwardResult.handled());
         ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
         String subchannel = in.readUTF();
-        Player player = (Player) event.getSource();
-
-        String serverName = null;
+        ServerConnection source = (ServerConnection) event.getSource();
+        Player player = source.getPlayer();
         if (subchannel.equals("Connect")) {
-            serverName = in.readUTF();
-            if (event.getSource() instanceof Player) {
-                server.getServer(serverName).ifPresent(targetServer ->
-                        player.createConnectionRequest(targetServer).fireAndForget());
-            }
+            String serverName = in.readUTF();
+            server.getServer(serverName).ifPresent(targetServer -> {
+                player.createConnectionRequest(targetServer).fireAndForget();
+                logger.info("Connecting player " + player.getUsername() + " to server " + serverName);
+            });
         }
-        logger.info("Send " + player.getUsername() + " to " + serverName);
     }
 
     @Subscribe
