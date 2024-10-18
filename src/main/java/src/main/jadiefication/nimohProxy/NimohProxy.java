@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 @Plugin(id = "nimohproxy", name = "NimohProxy", version = "1.0-SNAPSHOT")
 public class NimohProxy {
 
-    public static final MinecraftChannelIdentifier IDENTIFIER = MinecraftChannelIdentifier.from("bungeecord:main");
+    public static final MinecraftChannelIdentifier IDENTIFIER = MinecraftChannelIdentifier.from("velocity:main");
 
     @Inject
     private Logger logger;
